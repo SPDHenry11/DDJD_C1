@@ -16,7 +16,7 @@ public class Movement : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(groundCheckPivot.position,0.4f);
+        Gizmos.DrawWireSphere(groundCheckPivot.position, 0.4f);
     }
     void Awake()
     {
@@ -32,8 +32,8 @@ public class Movement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (grounded) rb.AddForce(new Vector2(Input.GetAxis("Horizontal") * speed, 0),ForceMode2D.Force);
-        else rb.AddForce(new Vector2(Input.GetAxis("Horizontal")*speed,0),ForceMode2D.Force);
+        if (grounded) rb.velocity = Vector3.SmoothDamp(rb.velocity, new Vector2(Input.GetAxis("Horizontal") * speed, rb.velocity.y), ref velocity, 0.1f);
+        else rb.AddForce(new Vector2(Input.GetAxis("Horizontal") * speed, 0), ForceMode2D.Force);
     }
 
     private void SetGrounded()

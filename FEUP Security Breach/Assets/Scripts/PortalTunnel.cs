@@ -22,20 +22,22 @@ public class PortalTunnel : MonoBehaviour
 
     private void Tunnel(int entrance, int exit)
     {
-        Movement.instance.grounded=false;
+        Movement.instance.grounded = false;
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
         Vector2 velocity = rb.velocity;
         Transform exitPortal = PortalGun.instantiatedPortals[exit].transform;
         float angle = 180 + exitPortal.eulerAngles.z - PortalGun.instantiatedPortals[entrance].transform.rotation.eulerAngles.z;
         transform.position = exitPortal.position + exitPortal.up;
         rb.velocity = Quaternion.AngleAxis(angle, Vector3.forward) * rb.velocity;
+        Debug.Log(Vector3.Dot(rb.velocity.normalized, exitPortal.right));
+        rb.velocity *= Vector3.Dot(rb.velocity.normalized, exitPortal.up);
         StartCoroutine(Pause());
     }
 
     IEnumerator Pause()
     {
         pause = true;
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.5f);
         pause = false;
     }
 }

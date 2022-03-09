@@ -3,19 +3,14 @@ using UnityEngine;
 
 public class PortalGun : MonoBehaviour
 {
+    [HideInInspector] public static GameObject[] instantiatedPortals;
     [SerializeField] private LayerMask portalGunShotLayers;
+    [SerializeField] private LayerMask itemsLayer;
     [SerializeField] private Transform muzzle;
     [SerializeField] private GameObject[] portals;
-    [HideInInspector] public static GameObject[] instantiatedPortals;
-
     void Awake()
     {
         instantiatedPortals = new GameObject[2];
-    }
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(muzzle.position, muzzle.position + muzzle.forward * 3);
     }
     void Update()
     {
@@ -63,7 +58,7 @@ public class PortalGun : MonoBehaviour
             compensation = -1;
             if (boundHit2.collider == null || !boundHit2.collider.tag.Equals("PortalWall")) return;
         }
-        else if (boundHit1.collider != null && boundHit1.collider.tag.Equals("PortalWall") && !Physics2D.OverlapArea(boundHit1.point - direction * 0.1f, boundHit2.point - direction,portalGunShotLayers))
+        else if (boundHit1.collider != null && boundHit1.collider.tag.Equals("PortalWall") && !Physics2D.OverlapArea(boundHit1.point - direction * 0.1f, boundHit2.point - direction, portalGunShotLayers))
         {
             InstantiatePortal(spot, direction, id);
             return;
@@ -74,7 +69,7 @@ public class PortalGun : MonoBehaviour
             boundHit2 = Physics2D.Raycast(spot - parallel + parallel * Mathf.Sign(compensation) * i / 10 - direction, direction, 2, portalGunShotLayers);
             if (boundHit1.collider != null && boundHit1.collider.tag.Equals("PortalWall")
             && boundHit2.collider != null && boundHit2.collider.tag.Equals("PortalWall")
-            && !Physics2D.OverlapArea(boundHit1.point - direction * 0.1f, boundHit2.point - direction,portalGunShotLayers))
+            && !Physics2D.OverlapArea(boundHit1.point - direction * 0.1f, boundHit2.point - direction, portalGunShotLayers))
             {
                 InstantiatePortal(new Vector2((boundHit1.point.x + boundHit2.point.x) / 2, (boundHit1.point.y + boundHit2.point.y) / 2), direction, id);
                 return;
