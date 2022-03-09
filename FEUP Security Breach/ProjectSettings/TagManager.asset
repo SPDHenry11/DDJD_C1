@@ -7,7 +7,7 @@ TagManager:
   - PortalWall
   - OrangePortal
   - BluePortal
-  - Item
+  - Coin
   layers:
   - Default
   - TransparentFX
@@ -18,8 +18,8 @@ TagManager:
   - Ground
   - PortalColliders
   - Player
-  - Interactable
-  - IgnorePlayer
+  - 
+  - 
   - 
   - 
   - 
