@@ -5,7 +5,6 @@ public class PortalGun : MonoBehaviour
 {
     [HideInInspector] public static GameObject[] instantiatedPortals;
     [SerializeField] private LayerMask portalGunShotLayers;
-    [SerializeField] private LayerMask itemsLayer;
     [SerializeField] private Transform muzzle;
     [SerializeField] private GameObject[] portals;
     void Awake()

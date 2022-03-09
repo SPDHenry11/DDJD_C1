@@ -29,7 +29,6 @@ public class PortalTunnel : MonoBehaviour
         float angle = 180 + exitPortal.eulerAngles.z - PortalGun.instantiatedPortals[entrance].transform.rotation.eulerAngles.z;
         transform.position = exitPortal.position + exitPortal.up;
         rb.velocity = Quaternion.AngleAxis(angle, Vector3.forward) * rb.velocity;
-        Debug.Log(Vector3.Dot(rb.velocity.normalized, exitPortal.right));
         rb.velocity *= Vector3.Dot(rb.velocity.normalized, exitPortal.up);
         StartCoroutine(Pause());
     }

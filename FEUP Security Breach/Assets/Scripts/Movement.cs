@@ -5,7 +5,7 @@ public class Movement : MonoBehaviour
 {
     public static Movement instance;
     public float speed = 5;
-    public float jumpForce = 20;
+    public float jumpForce = 5;
     [SerializeField] private Transform groundCheckPivot;
     [SerializeField] private LayerMask groundLayer;
     private Rigidbody2D rb;

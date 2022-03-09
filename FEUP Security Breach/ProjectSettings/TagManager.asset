@@ -8,6 +8,8 @@ TagManager:
   - OrangePortal
   - BluePortal
   - Coin
+  - Item
+  - CoffeeMachine
   layers:
   - Default
   - TransparentFX
@@ -18,10 +20,10 @@ TagManager:
   - Ground
   - PortalColliders
   - Player
-  - 
-  - 
-  - 
-  - 
+  - Interactable
+  - IngoreCollision
+  - Item
+  - Platform
   - 
   - 
   - 
