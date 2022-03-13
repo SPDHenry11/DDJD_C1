@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/AudioScene.unity
+- path: Assets/Scenes/SecurityCamera.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0

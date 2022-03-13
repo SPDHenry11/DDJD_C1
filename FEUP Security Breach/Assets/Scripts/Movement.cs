@@ -12,10 +12,9 @@ public class Movement : MonoBehaviour
     [HideInInspector] public bool grounded = false;
     private Vector3 velocity = Vector3.zero;
 
-    //Visualize Ground check collision
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(groundCheckPivot.position, 0.4f);
     }
     void Awake()
