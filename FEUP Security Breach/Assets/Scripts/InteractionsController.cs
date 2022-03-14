@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -130,10 +129,14 @@ public class InteractionsController : MonoBehaviour
             currentTriggers.Add(other.gameObject);
             if (currentItem.obj != null) ResetColor();
         }
-        if (other.transform.tag == "Coin")
+        if (other.tag == "Coin")
         {
             UIController.instance.AddCoin();
             Destroy(other.gameObject);
+        }
+        else if (other.tag == "CheckPoint")
+        {
+            GameController.instance.SetCheckPoint(other.GetComponent<CheckPoint>());
         }
     }
 

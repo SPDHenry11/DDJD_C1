@@ -60,7 +60,6 @@ public class PortalGun : MonoBehaviour
         else if (boundHit1.collider != null && boundHit1.collider.tag.Equals("PortalWall") && !Physics2D.OverlapArea(boundHit1.point - direction * 0.1f, boundHit2.point - direction, portalGunShotLayers)
             && boundHit2.collider != null && boundHit2.collider.tag.Equals("PortalWall"))
         {
-            Debug.Log("First");
             InstantiatePortal(spot, direction, id);
             return;
         }
@@ -72,7 +71,6 @@ public class PortalGun : MonoBehaviour
             && boundHit2.collider != null && boundHit2.collider.tag.Equals("PortalWall")
             && !Physics2D.OverlapArea(boundHit1.point - direction * 0.1f, boundHit2.point - direction, portalGunShotLayers))
             {
-                Debug.Log("Second");
                 InstantiatePortal(new Vector2((boundHit1.point.x + boundHit2.point.x) / 2, (boundHit1.point.y + boundHit2.point.y) / 2), direction, id);
                 return;
             }
