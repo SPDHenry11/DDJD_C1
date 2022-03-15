@@ -38,7 +38,7 @@ public class SecurityCamera : MonoBehaviour
                 yield return null;
                 currentAngle -= 20 * Time.deltaTime;
                 transform.eulerAngles = new Vector3(0, 0, currentAngle);
-                if (Vector2.Distance(target.position, transform.position) < range && Vector2.Angle(-transform.up, (target.position - transform.position)) < fov / 2)
+                if (!GameController.imunity && Vector2.Distance(target.position, transform.position) < range && Vector2.Angle(-transform.up, (target.position - transform.position)) < fov / 2)
                 {
                     StartCoroutine(Follow());
                     yield break;
@@ -53,6 +53,11 @@ public class SecurityCamera : MonoBehaviour
                 yield return null;
                 currentAngle += 20 * Time.deltaTime;
                 transform.eulerAngles = new Vector3(0, 0, currentAngle);
+                if (!GameController.imunity && Vector2.Distance(target.position, transform.position) < range && Vector2.Angle(-transform.up, (target.position - transform.position)) < fov / 2)
+                {
+                    StartCoroutine(Follow());
+                    yield break;
+                }
             }
             currentAngle = destination;
             transform.eulerAngles = new Vector3(0, 0, destination);
@@ -74,8 +79,9 @@ public class SecurityCamera : MonoBehaviour
             transform.eulerAngles = new Vector3(0, 0, clamped);
             time += Time.deltaTime;
             yield return null;
-            if (time >= 2) {
-                //death
+            if (time >= 2)
+            {
+                UIController.instance.Busted();
             }
         }
         float t = Time.time;

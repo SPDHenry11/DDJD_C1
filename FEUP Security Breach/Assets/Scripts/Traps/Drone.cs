@@ -46,7 +46,7 @@ public class Drone : MonoBehaviour
             while (Vector2.Distance(transform.position, nextNode) > 1f)
             {
                 RaycastHit2D hit = Physics2D.Raycast(transform.position, target.position - transform.position, sightRange, visibleLayers);
-                if (hit.collider != null && hit.collider.tag.Equals("Player"))
+                if (!GameController.imunity && hit.collider != null && hit.collider.tag.Equals("Player"))
                 {
                     yield return null;
                     StartCoroutine(Chase());
@@ -76,7 +76,7 @@ public class Drone : MonoBehaviour
                 lastPos = target.position;
                 if (Vector2.Distance(target.position, transform.position) <= deathRange)
                 {
-                    //death
+                    UIController.instance.Busted();
                     StartCoroutine(Return());
                     yield break;
                 }

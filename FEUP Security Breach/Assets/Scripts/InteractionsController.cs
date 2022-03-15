@@ -96,7 +96,7 @@ public class InteractionsController : MonoBehaviour
                                 if (UIController.instance.PurchaseCoffee())
                                 {
                                     //Do Effects
-                                    Movement.instance.jumpForce = 10;
+                                    Movement.instance.speed = 10;
                                 }
                                 break;
                             case "Button":
