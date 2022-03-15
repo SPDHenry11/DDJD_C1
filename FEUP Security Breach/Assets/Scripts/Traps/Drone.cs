@@ -64,7 +64,7 @@ public class Drone : MonoBehaviour
     IEnumerator Chase()
     {
         Vector2 lastPos = target.position;
-        while (Vector2.Distance(transform.position, lastPos) > 1f)
+        while (!GameController.imunity && Vector2.Distance(transform.position, lastPos) > 1f)
         {
             Vector2 force = Vector2.ClampMagnitude((lastPos - new Vector2(transform.position.x, transform.position.y)) * Time.deltaTime * 200, 4);
             rb.AddForce(force, ForceMode2D.Force);

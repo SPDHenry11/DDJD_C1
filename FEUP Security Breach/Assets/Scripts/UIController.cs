@@ -80,10 +80,10 @@ public class UIController : MonoBehaviour
         text.faceColor = new Color32(255, 255, 255, 255);
         rect.localScale = new Vector3(1, 1, 1);
         yield return StartCoroutine(FadeOut());
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
         while (text.faceColor.a > 0)
         {
-            text.faceColor = new Color32(255, 255, 255, (byte)(text.faceColor.a - 255 * Time.deltaTime));
+            text.faceColor = new Color32(255, 255, 255, (byte) Mathf.Max(text.faceColor.a - 255 * Time.deltaTime,0));
             yield return null;
         }
         text.faceColor = new Color32(255, 255, 255, 0);

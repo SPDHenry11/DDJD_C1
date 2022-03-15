@@ -70,7 +70,7 @@ public class SecurityCamera : MonoBehaviour
     {
         float currentAngle = 0;
         float time = 0;
-        while (Vector2.Distance(target.position, transform.position) < range + 1 && Vector2.Angle(-transform.up, (target.position - transform.position)) < fov / 2)
+        while (!GameController.imunity && Vector2.Distance(target.position, transform.position) < range + 1 && Vector2.Angle(-transform.up, (target.position - transform.position)) < fov / 2)
         {
             transform.up = Vector3.RotateTowards(transform.up, -(target.position - transform.position), Mathf.PI / 2 * Time.deltaTime, 0.0f);
             currentAngle = transform.eulerAngles.z;
@@ -85,7 +85,7 @@ public class SecurityCamera : MonoBehaviour
             }
         }
         float t = Time.time;
-        while (Time.time - t < 2)
+        while (!GameController.imunity && Time.time - t < 2)
         {
             if (Vector2.Distance(target.position, transform.position) < range + 1 && Vector2.Angle(-transform.up, (target.position - transform.position)) < fov / 2)
             {
