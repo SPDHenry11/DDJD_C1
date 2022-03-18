@@ -1,15 +1,21 @@
 
+using System.Collections;
 using UnityEngine;
 
 public class PortalGun : MonoBehaviour
 {
     [HideInInspector] public static GameObject[] instantiatedPortals;
+    [SerializeField] private float range = 50;
     [SerializeField] private LayerMask portalGunShotLayers;
     [SerializeField] private Transform muzzle;
     [SerializeField] private GameObject[] portals;
+    [SerializeField] private GameObject bulletTrail;
+
+    private Coroutine[] coroutines;
     void Awake()
     {
         instantiatedPortals = new GameObject[2];
+        coroutines = new Coroutine[2];
     }
     void Update()
     {
@@ -22,32 +28,36 @@ public class PortalGun : MonoBehaviour
         float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
-        if (instantiatedPortals[0] != null) instantiatedPortals[0].SetActive(false);
+        if (instantiatedPortals[0] != null) instantiatedPortals[0].GetComponent<BoxCollider2D>().enabled = false;
         //Orange Portal
         if (Input.GetButtonDown("Fire1"))
         {
-            RaycastHit2D hit = Physics2D.Raycast(muzzle.position, muzzle.forward, 30, portalGunShotLayers);
+            RaycastHit2D hit = Physics2D.Raycast(muzzle.position, muzzle.forward, range, portalGunShotLayers);
             if (hit.collider != null)
             {
-                ValidatePortal(hit.point, -hit.normal, 0);
+                StartCoroutine(AnimateBulletTrail(hit.point, portals[0].GetComponentInChildren<SpriteRenderer>().color));
+                if (hit.collider.tag.Equals("PortalWall")) ValidatePortal(hit.point, -hit.normal, 0);
             }
+            else StartCoroutine(AnimateBulletTrail(muzzle.position + muzzle.forward * range, portals[0].GetComponentInChildren<SpriteRenderer>().color));
         }
-        if (instantiatedPortals[0] != null) instantiatedPortals[0].SetActive(true);
-        if (instantiatedPortals[1] != null) instantiatedPortals[1].SetActive(false);
+        if (instantiatedPortals[0] != null) instantiatedPortals[0].GetComponent<BoxCollider2D>().enabled = true;
+        if (instantiatedPortals[1] != null) instantiatedPortals[1].GetComponent<BoxCollider2D>().enabled = false;
         if (Input.GetButtonDown("Fire2"))
         {
-            RaycastHit2D hit = Physics2D.Raycast(muzzle.position, muzzle.forward, 30, portalGunShotLayers);
-            if (hit.collider != null && hit.collider.tag.Equals("PortalWall"))
+            RaycastHit2D hit = Physics2D.Raycast(muzzle.position, muzzle.forward, range, portalGunShotLayers);
+            if (hit.collider != null)
             {
-                ValidatePortal(hit.point, -hit.normal, 1);
+                StartCoroutine(AnimateBulletTrail(hit.point, portals[1].GetComponentInChildren<SpriteRenderer>().color));
+                if (hit.collider.tag.Equals("PortalWall")) ValidatePortal(hit.point, -hit.normal, 1);
             }
+            else StartCoroutine(AnimateBulletTrail(muzzle.position + muzzle.forward * range, portals[1].GetComponentInChildren<SpriteRenderer>().color));
         }
-        if (instantiatedPortals[1] != null) instantiatedPortals[1].SetActive(true);
+        if (instantiatedPortals[1] != null) instantiatedPortals[1].GetComponent<BoxCollider2D>().enabled = true;
     }
     private void ValidatePortal(Vector2 spot, Vector2 direction, int id)
     {
         Vector2 parallel = Vector2.Perpendicular(direction);
-        parallel = new Vector2(Mathf.Abs(parallel.x), Mathf.Abs(parallel.y));
+        parallel = new Vector2(Mathf.Abs(parallel.x), Mathf.Abs(parallel.y)) * 1.3f;
 
         RaycastHit2D boundHit1 = Physics2D.Raycast(spot + parallel - direction, direction, 2, portalGunShotLayers);
         RaycastHit2D boundHit2 = Physics2D.Raycast(spot - parallel - direction, direction, 2, portalGunShotLayers);
@@ -85,6 +95,43 @@ public class PortalGun : MonoBehaviour
             instantiatedPortals[id].transform.rotation = Quaternion.FromToRotation(Vector3.down, direction);
         }
         else instantiatedPortals[id] = Instantiate(portals[id], spot, Quaternion.FromToRotation(Vector3.down, direction));
+        if (coroutines[id] != null) StopCoroutine(coroutines[id]);
+        coroutines[id] = StartCoroutine(AnimatePortal(instantiatedPortals[id].transform));
+    }
+
+    IEnumerator AnimatePortal(Transform portal)
+    {
+        portal.gameObject.GetComponentInChildren<ParticleSystem>().Clear();
+        float scale = 0;
+        float destination = portals[0].transform.GetChild(0).localScale.x;
+        Transform target = portal.GetChild(0).transform;
+        target.localScale = new Vector3(0, 1, 1);
+        while (target.localScale.x < destination * 0.95f)
+        {
+            scale += (destination - scale) * Time.deltaTime * 6;
+            target.localScale = new Vector3(scale, destination, 1);
+            yield return null;
+        }
+        target.localScale = new Vector3(destination, destination, 1);
+
+    }
+
+    IEnumerator AnimateBulletTrail(Vector3 destination, Color color)
+    {
+        AudioController.instance.Play("PortalGun");
+        float maxDistance = Vector2.Distance(destination, muzzle.position);
+        Transform effect = Instantiate(bulletTrail, muzzle.position, muzzle.rotation).transform;
+        TrailRenderer tr = effect.gameObject.GetComponent<TrailRenderer>();
+        tr.startColor = color;
+        while (Vector2.Distance(muzzle.position, effect.position) < maxDistance)
+        {
+            yield return null;
+            effect.position += (destination - muzzle.position).normalized * 200 * Time.deltaTime;
+        }
+        effect.position = destination;
+        yield return new WaitForSeconds(0.05f);
+        Destroy(effect.gameObject);
+
     }
 
 }

@@ -22,12 +22,13 @@ public class PortalTunnel : MonoBehaviour
 
     private void Tunnel(int entrance, int exit)
     {
+        AudioController.instance.Play("Tunnel");
         Movement.instance.grounded = false;
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
         Vector2 velocity = rb.velocity;
         Transform exitPortal = PortalGun.instantiatedPortals[exit].transform;
         float angle = 180 + exitPortal.eulerAngles.z - PortalGun.instantiatedPortals[entrance].transform.rotation.eulerAngles.z;
-        transform.position = exitPortal.position + exitPortal.up/2;
+        transform.position = exitPortal.position + exitPortal.up / 2;
         rb.velocity = Quaternion.AngleAxis(angle, Vector3.forward) * rb.velocity;
         rb.velocity *= Vector3.Dot(rb.velocity.normalized, exitPortal.up);
         StartCoroutine(Pause());

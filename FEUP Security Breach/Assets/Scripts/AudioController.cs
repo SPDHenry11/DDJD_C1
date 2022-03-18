@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioController : MonoBehaviour
 {
@@ -11,6 +13,7 @@ public class AudioController : MonoBehaviour
     }
 
     public static AudioController instance;
+    [SerializeField] private AudioMixer mixer;
 
     private void Awake()
     {
@@ -25,15 +28,49 @@ public class AudioController : MonoBehaviour
     }
     public void Play(string name)
     {
-        if (!Array.Exists(sounds, sound => sound.audio.clip.name == name))
+        if (!Array.Exists(sounds, sound => sound.name == name))
         {
             Debug.LogError("Missing Audio Source \"" + name + "\" in AudioController");
             return;
         }
-        Array.Find(sounds, sound => sound.audio.clip.name == name).audio.Play();
+        Array.Find(sounds, sound => sound.name == name).audio.Play();
+    }
+    public void Stop(string name)
+    {
+        if (!Array.Exists(sounds, sound => sound.name == name))
+        {
+            Debug.LogError("Missing Audio Source \"" + name + "\" in AudioController");
+            return;
+        }
+        Array.Find(sounds, sound => sound.name == name).audio.Stop();
     }
     private bool audioExists(string name)
     {
         return true;
     }
+
+    public IEnumerator FadeOut()
+    {
+        float volume = 1;
+        while (volume >= 0)
+        {
+            volume -= 0.5f * Time.deltaTime;
+            mixer.SetFloat("Volume", Mathf.Log10(volume) * 20);
+            yield return null;
+        }
+        mixer.SetFloat("Volume", -80);
+    }
+
+    public IEnumerator FadeIn()
+    {
+        float volume = 0;
+        while (volume < 1)
+        {
+            volume += 0.5f * Time.deltaTime;
+            mixer.SetFloat("Volume", Mathf.Log10(volume) * 20);
+            yield return null;
+        }
+        mixer.SetFloat("Volume", 0);
+    }
+
 }

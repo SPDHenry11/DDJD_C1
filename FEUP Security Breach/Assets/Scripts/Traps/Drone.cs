@@ -63,6 +63,7 @@ public class Drone : MonoBehaviour
     }
     IEnumerator Chase()
     {
+        AudioController.instance.Play("DroneDetection");
         Vector2 lastPos = target.position;
         while (!GameController.imunity && Vector2.Distance(transform.position, lastPos) > 1f)
         {
@@ -197,7 +198,7 @@ public class Drone : MonoBehaviour
             }
             return -1;
         }
-        if ((closestIndex > secondClosestIndex && closestIndex > 0) || (closestIndex == 0 && secondClosestIndex == path.nodes.Length - 1))
+        if ((closestIndex > secondClosestIndex && closestIndex > 0) || (closestIndex == 0 && secondClosestIndex == path.nodes.Length - 1) || foundSecondCloser)
         {
             destination = closestIndex;
             return bestPath;

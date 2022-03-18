@@ -7,6 +7,7 @@ public class InteractionsController : MonoBehaviour
     [HideInInspector] public static Rigidbody2D item;
     [SerializeField] private Transform itemHolder;
     [SerializeField] private LayerMask itemsRaycast;
+    [SerializeField] private ParticleSystem effect;
     private Item currentItem;
     private struct Item
     {
@@ -15,11 +16,20 @@ public class InteractionsController : MonoBehaviour
     }
     //Triggers
     private List<GameObject> currentTriggers = new List<GameObject>();
+    [SerializeField] private GameObject triggerEffect;
+    private Vector2 triggerEffectDefaultSize;
+    private int closestTriggerIndex = -1;
 
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawLine(itemHolder.position - itemHolder.forward * 2, itemHolder.position + .5f * itemHolder.forward);
+    }
+
+    void Awake()
+    {
+        triggerEffectDefaultSize = triggerEffect.GetComponent<SpriteRenderer>().bounds.size;
+        triggerEffect.transform.SetParent(null);
     }
 
     void Update()
@@ -87,7 +97,17 @@ public class InteractionsController : MonoBehaviour
                             closestIndex = i;
                         }
                     }
-                    //TODO: Add some sort of highlight on the trigger
+                    if (closestTriggerIndex != closestIndex)
+                    {
+                        triggerEffect.SetActive(true);
+                        Vector2 triggerSize = currentTriggers[closestIndex].GetComponent<SpriteRenderer>().sprite.bounds.size;
+                        Vector2 triggerScale = currentTriggers[closestIndex].transform.lossyScale;
+                        float xRatio = triggerSize.x / triggerEffectDefaultSize.x;
+                        float yRatio = triggerSize.y / triggerEffectDefaultSize.y;
+                        triggerEffect.transform.localScale = new Vector3(xRatio * triggerScale.x, yRatio * triggerScale.y, 1);
+                        triggerEffect.transform.position = currentTriggers[closestIndex].transform.position;
+                        closestTriggerIndex = closestIndex;
+                    }
                     if (Input.GetKeyDown(KeyCode.E))
                     {
                         switch (currentTriggers[closestIndex].tag)
@@ -95,14 +115,19 @@ public class InteractionsController : MonoBehaviour
                             case "CoffeeMachine":
                                 if (UIController.instance.PurchaseCoffee())
                                 {
-                                    //Do Effects
+                                    AudioController.instance.Play("Good");
+                                    effect.Play();
+                                    currentTriggers[closestIndex].GetComponent<Collider2D>().enabled = false;
                                     Movement.instance.speed = 10;
                                 }
                                 break;
-                            case "Button":
-                                break;
                         }
                     }
+                }
+                else if (closestTriggerIndex != -1)
+                {
+                    triggerEffect.SetActive(false);
+                    closestTriggerIndex = -1;
                 }
             }
         }
@@ -129,14 +154,19 @@ public class InteractionsController : MonoBehaviour
             currentTriggers.Add(other.gameObject);
             if (currentItem.obj != null) ResetColor();
         }
-        if (other.tag == "Coin")
+        switch (other.tag)
         {
-            UIController.instance.AddCoin();
-            Destroy(other.gameObject);
-        }
-        else if (other.tag == "CheckPoint")
-        {
-            GameController.instance.SetCheckPoint(other.GetComponent<CheckPoint>());
+            case "Coin":
+                AudioController.instance.Play("Coin");
+                UIController.instance.AddCoin();
+                Destroy(other.gameObject);
+                break;
+            case "CheckPoint":
+                GameController.instance.SetCheckPoint(other.GetComponent<CheckPoint>());
+                break;
+            case "EndGame":
+                if (!GameController.imunity) UIController.instance.End();
+                break;
         }
     }
 

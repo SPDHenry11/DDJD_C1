@@ -31,6 +31,7 @@ public class SecurityCamera : MonoBehaviour
         float destination = -angle / 2;
         float currentAngle = transform.eulerAngles.z;
         if (currentAngle > 180) currentAngle -= 360;
+        float time = 0;
         while (true)
         {
             while (currentAngle > destination)
@@ -46,7 +47,16 @@ public class SecurityCamera : MonoBehaviour
             }
             transform.eulerAngles = new Vector3(0, 0, destination);
             currentAngle = destination;
-            yield return new WaitForSeconds(2);
+            time = Time.time;
+            while (Time.time - time < 2)
+            {
+                if (!GameController.imunity && Vector2.Distance(target.position, transform.position) < range && Vector2.Angle(-transform.up, (target.position - transform.position)) < fov / 2)
+                {
+                    StartCoroutine(Follow());
+                    yield break;
+                }
+                yield return null;
+            }
             destination = angle / 2;
             while (currentAngle < destination)
             {
@@ -61,13 +71,25 @@ public class SecurityCamera : MonoBehaviour
             }
             currentAngle = destination;
             transform.eulerAngles = new Vector3(0, 0, destination);
-            yield return new WaitForSeconds(2);
+            time = Time.time;
+            while (Time.time - time < 2)
+            {
+                if (!GameController.imunity && Vector2.Distance(target.position, transform.position) < range && Vector2.Angle(-transform.up, (target.position - transform.position)) < fov / 2)
+                {
+                    StartCoroutine(Follow());
+                    yield break;
+                }
+                yield return null;
+            }
             destination = -angle / 2;
         }
     }
 
     IEnumerator Follow()
     {
+        GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 0.5f);
+        AudioController.instance.Play("SecurityCamera");
+        transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 0.5f);
         float currentAngle = 0;
         float time = 0;
         while (!GameController.imunity && Vector2.Distance(target.position, transform.position) < range + 1 && Vector2.Angle(-transform.up, (target.position - transform.position)) < fov / 2)
@@ -95,6 +117,8 @@ public class SecurityCamera : MonoBehaviour
             time -= Time.deltaTime;
             yield return null;
         }
+        GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.7f);
+        transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.7f);
         StartCoroutine(Patrol());
     }
 }
