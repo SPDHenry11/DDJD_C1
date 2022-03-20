@@ -6181,6 +6181,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fd3814c6e89100a45b341ae57dde9553, type: 3}
+--- !u!1 &2097389364 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1854954500297696010, guid: b748e6419de616b45bb58978061bb882, type: 3}
+  m_PrefabInstance: {fileID: 1495071356346754815}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1495071356346754815
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6272,6 +6277,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1495071356804233878, guid: b748e6419de616b45bb58978061bb882, type: 3}
+      propertyPath: endGame
+      value: 
+      objectReference: {fileID: 2097389364}
     - target: {fileID: 1495071356804233879, guid: b748e6419de616b45bb58978061bb882, type: 3}
       propertyPath: m_Name
       value: Canvas 1
