@@ -70,6 +70,7 @@ public class InteractionsController : MonoBehaviour
                     switch (hit.collider.tag)
                     {
                         case "Item":
+                            AudioController.instance.Play("Pickup");
                             GameObject pickup = hit.collider.gameObject;
                             item = pickup.GetComponent<Rigidbody2D>();
                             item.gravityScale = 0;
@@ -120,6 +121,7 @@ public class InteractionsController : MonoBehaviour
                                     currentTriggers[closestIndex].GetComponent<Collider2D>().enabled = false;
                                     Movement.instance.speed = 10;
                                 }
+                                else AudioController.instance.Play("Error");
                                 break;
                         }
                     }

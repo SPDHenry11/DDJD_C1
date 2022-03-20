@@ -38,21 +38,25 @@ public class Gate : MonoBehaviour
 
     IEnumerator Open()
     {
+        GetComponent<AudioSource>().Play();
         while (transform.position.y < openedY)
         {
             transform.position = new Vector2(transform.position.x, transform.position.y + speed * Time.deltaTime);
             yield return null;
         }
         transform.position = new Vector2(transform.position.x, openedY);
+        GetComponent<AudioSource>().Stop();
     }
 
     IEnumerator Close()
     {
+        GetComponent<AudioSource>().Play();
         while (transform.position.y > closedY)
         {
             transform.position = new Vector2(transform.position.x, transform.position.y - speed * Time.deltaTime);
             yield return null;
         }
         transform.position = new Vector2(transform.position.x, closedY);
+        GetComponent<AudioSource>().Stop();
     }
 }

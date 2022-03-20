@@ -21,13 +21,15 @@ public class PressureButton : MonoBehaviour
         else
             rb.AddForce(transform.up * 100 * Time.deltaTime);
 
-        if (gameObject.layer == 0 && transform.localPosition.y < maxHeight - 0.2f)
+        if (gameObject.layer == 0 && transform.localPosition.y < maxHeight - 0.1f)
         {
+            AudioController.instance.Play("Press");
             OnPressed.Invoke();
             gameObject.layer = 6;
         }
-        else if (gameObject.layer == 6 && transform.localPosition.y >= maxHeight - 0.2f)
+        else if (gameObject.layer == 6 && transform.localPosition.y >= maxHeight - 0.1f)
         {
+            AudioController.instance.Play("Release");
             gameObject.layer = 0;
             OnRelease.Invoke();
 
