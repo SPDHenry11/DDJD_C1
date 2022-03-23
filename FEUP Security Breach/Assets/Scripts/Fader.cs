@@ -27,6 +27,7 @@ public class Fader : MonoBehaviour
             yield return null;
         }
         fader.color = new Color(0, 0, 0, 0);
+        if(TimeCounter.instance!=null) TimeCounter.instance.counting = true;
         transform.GetChild(0).gameObject.SetActive(false);
     }
     public IEnumerator FadeOut()

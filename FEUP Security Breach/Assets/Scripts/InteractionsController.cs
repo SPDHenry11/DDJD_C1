@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +8,8 @@ public class InteractionsController : MonoBehaviour
     [HideInInspector] public static Rigidbody2D item;
     [SerializeField] private Transform itemHolder;
     [SerializeField] private LayerMask itemsRaycast;
-    [SerializeField] private ParticleSystem effect;
+    [SerializeField] private ParticleSystem powerUpEffect;
+    [SerializeField] private GameObject coinEffect;
     private Item currentItem;
     private struct Item
     {
@@ -77,8 +79,6 @@ public class InteractionsController : MonoBehaviour
                             pickup.layer = 10;
                             ResetColor();
                             break;
-                        case "Wire":
-                            break;
                     }
                 }
             }
@@ -117,7 +117,7 @@ public class InteractionsController : MonoBehaviour
                                 if (UIController.instance.PurchaseCoffee())
                                 {
                                     AudioController.instance.Play("Good");
-                                    effect.Play();
+                                    powerUpEffect.Play();
                                     currentTriggers[closestIndex].GetComponent<Collider2D>().enabled = false;
                                     Movement.instance.speed = 10;
                                 }
@@ -161,6 +161,7 @@ public class InteractionsController : MonoBehaviour
             case "Coin":
                 AudioController.instance.Play("Coin");
                 UIController.instance.AddCoin();
+                Instantiate(coinEffect, other.transform.position, other.transform.rotation);
                 Destroy(other.gameObject);
                 break;
             case "CheckPoint":
@@ -178,5 +179,11 @@ public class InteractionsController : MonoBehaviour
         {
             currentTriggers.Remove(other.gameObject);
         }
+    }
+
+    IEnumerator LifeTime(GameObject obj, float time)
+    {
+        yield return new WaitForSeconds(time);
+        Destroy(obj);
     }
 }

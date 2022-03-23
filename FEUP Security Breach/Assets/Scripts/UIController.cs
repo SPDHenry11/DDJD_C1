@@ -19,7 +19,7 @@ public class UIController : MonoBehaviour
     public void AddCoin()
     {
         coins++;
-        textCoins.text = "Coins " + coins.ToString();
+        textCoins.text = "x" + coins.ToString();
     }
 
     public bool PurchaseCoffee()
@@ -27,7 +27,7 @@ public class UIController : MonoBehaviour
         if (coins >= 5)
         {
             coins -= 5;
-            textCoins.text = "Coins " + coins.ToString();
+            textCoins.text = "x" + coins.ToString();
             return true;
         }
         return false;
@@ -47,6 +47,7 @@ public class UIController : MonoBehaviour
     }
     IEnumerator BustedEffect()
     {
+        TimeCounter.instance.counting = false;
         Movement.instance.enabled = false;
         busted.SetActive(true);
         RectTransform rect = busted.GetComponent<RectTransform>();
@@ -83,6 +84,7 @@ public class UIController : MonoBehaviour
 
     IEnumerator EndGame()
     {
+        TimeCounter.instance.EndGame();
         AudioController.instance.Stop("Music");
         AudioController.instance.Play("Win");
         TextMeshProUGUI text = endGame.GetComponent<TextMeshProUGUI>();
