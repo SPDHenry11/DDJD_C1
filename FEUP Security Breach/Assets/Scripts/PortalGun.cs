@@ -5,6 +5,7 @@ using UnityEngine;
 public class PortalGun : MonoBehaviour
 {
     [HideInInspector] public static GameObject[] instantiatedPortals;
+    public static bool toggler = true;
     [SerializeField] private float range = 50;
     [SerializeField] private LayerMask portalGunShotLayers;
     [SerializeField] private Transform muzzle;
@@ -16,43 +17,47 @@ public class PortalGun : MonoBehaviour
     {
         instantiatedPortals = new GameObject[2];
         coroutines = new Coroutine[2];
+        toggler = true;
     }
     void Update()
     {
-        Vector3 mousePos = Input.mousePosition;
-
-        Vector3 objectPos = Camera.main.WorldToScreenPoint(transform.position);
-        mousePos.x = mousePos.x - objectPos.x;
-        mousePos.y = mousePos.y - objectPos.y;
-
-        float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
-
-        if (instantiatedPortals[0] != null) instantiatedPortals[0].GetComponent<BoxCollider2D>().enabled = false;
-        //Orange Portal
-        if (Input.GetButtonDown("Fire1"))
+        if (toggler)
         {
-            RaycastHit2D hit = Physics2D.Raycast(muzzle.position, muzzle.forward, range, portalGunShotLayers);
-            if (hit.collider != null)
+            Vector3 mousePos = Input.mousePosition;
+
+            Vector3 objectPos = Camera.main.WorldToScreenPoint(transform.position);
+            mousePos.x = mousePos.x - objectPos.x;
+            mousePos.y = mousePos.y - objectPos.y;
+
+            float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+
+            if (instantiatedPortals[0] != null) instantiatedPortals[0].GetComponent<BoxCollider2D>().enabled = false;
+            //Orange Portal
+            if (Input.GetButtonDown("Fire1"))
             {
-                StartCoroutine(AnimateBulletTrail(hit.point, portals[0].GetComponentInChildren<SpriteRenderer>().color));
-                if (hit.collider.tag.Equals("PortalWall")) ValidatePortal(hit.point, -hit.normal, 0);
+                RaycastHit2D hit = Physics2D.Raycast(muzzle.position, muzzle.forward, range, portalGunShotLayers);
+                if (hit.collider != null)
+                {
+                    StartCoroutine(AnimateBulletTrail(hit.point, portals[0].GetComponentInChildren<SpriteRenderer>().color));
+                    if (hit.collider.tag.Equals("PortalWall")) ValidatePortal(hit.point, -hit.normal, 0);
+                }
+                else StartCoroutine(AnimateBulletTrail(muzzle.position + muzzle.forward * range, portals[0].GetComponentInChildren<SpriteRenderer>().color));
             }
-            else StartCoroutine(AnimateBulletTrail(muzzle.position + muzzle.forward * range, portals[0].GetComponentInChildren<SpriteRenderer>().color));
-        }
-        if (instantiatedPortals[0] != null) instantiatedPortals[0].GetComponent<BoxCollider2D>().enabled = true;
-        if (instantiatedPortals[1] != null) instantiatedPortals[1].GetComponent<BoxCollider2D>().enabled = false;
-        if (Input.GetButtonDown("Fire2"))
-        {
-            RaycastHit2D hit = Physics2D.Raycast(muzzle.position, muzzle.forward, range, portalGunShotLayers);
-            if (hit.collider != null)
+            if (instantiatedPortals[0] != null) instantiatedPortals[0].GetComponent<BoxCollider2D>().enabled = true;
+            if (instantiatedPortals[1] != null) instantiatedPortals[1].GetComponent<BoxCollider2D>().enabled = false;
+            if (Input.GetButtonDown("Fire2"))
             {
-                StartCoroutine(AnimateBulletTrail(hit.point, portals[1].GetComponentInChildren<SpriteRenderer>().color));
-                if (hit.collider.tag.Equals("PortalWall")) ValidatePortal(hit.point, -hit.normal, 1);
+                RaycastHit2D hit = Physics2D.Raycast(muzzle.position, muzzle.forward, range, portalGunShotLayers);
+                if (hit.collider != null)
+                {
+                    StartCoroutine(AnimateBulletTrail(hit.point, portals[1].GetComponentInChildren<SpriteRenderer>().color));
+                    if (hit.collider.tag.Equals("PortalWall")) ValidatePortal(hit.point, -hit.normal, 1);
+                }
+                else StartCoroutine(AnimateBulletTrail(muzzle.position + muzzle.forward * range, portals[1].GetComponentInChildren<SpriteRenderer>().color));
             }
-            else StartCoroutine(AnimateBulletTrail(muzzle.position + muzzle.forward * range, portals[1].GetComponentInChildren<SpriteRenderer>().color));
+            if (instantiatedPortals[1] != null) instantiatedPortals[1].GetComponent<BoxCollider2D>().enabled = true;
         }
-        if (instantiatedPortals[1] != null) instantiatedPortals[1].GetComponent<BoxCollider2D>().enabled = true;
     }
     private void ValidatePortal(Vector2 spot, Vector2 direction, int id)
     {
@@ -133,5 +138,4 @@ public class PortalGun : MonoBehaviour
         Destroy(effect.gameObject);
 
     }
-
 }

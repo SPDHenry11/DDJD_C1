@@ -5,25 +5,40 @@ using UnityEngine.SceneManagement;
 public class PauseMenu : MonoBehaviour
 {
     public static PauseMenu instance;
+    private bool toggler = false;
     void Awake()
     {
-        instance=this;
+        instance = this;
     }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Time.timeScale = 0;
-            transform.GetChild(0).gameObject.SetActive(true);
+            AudioController.instance.Play("Click");
+            if (toggler)
+            {
+                Resume();
+            }
+            else
+            {
+                toggler = true;
+                PortalGun.toggler = false;
+                Time.timeScale = 0;
+                transform.GetChild(0).gameObject.SetActive(true);
+                GameObject.Find("EventSystem").GetComponent<UnityEngine.EventSystems.EventSystem>().SetSelectedGameObject(null);
+            }
         }
     }
     public void Resume()
     {
+        toggler = false;
         transform.GetChild(0).gameObject.SetActive(false);
         Time.timeScale = 1;
+        PortalGun.toggler = true;
     }
     public void CheckPoint()
     {
+        toggler = false;
         StartCoroutine(ConfirmCheckPoint());
     }
     public void Restart()
@@ -39,14 +54,22 @@ public class PauseMenu : MonoBehaviour
         StartCoroutine(ConfirmQuit());
     }
 
+    public void EndGame()
+    {
+        if (toggler) Resume();
+        enabled = false;
+    }
+
     IEnumerator ConfirmCheckPoint()
     {
         yield return StartCoroutine(Confirmation.instance.Confirm("Are you sure you want to revert back to the last checkpoint?"));
         if (Confirmation.instance.answer)
         {
             transform.GetChild(0).gameObject.SetActive(false);
-            Time.timeScale = 1;
             yield return StartCoroutine(Fader.instance.FadeOut());
+            TimeCounter.instance.counting = false;
+            Time.timeScale = 1;
+            toggler = false;
             yield return new WaitForSeconds(1);
             GameController.instance.checkPoint.Restart();
         }
@@ -58,6 +81,7 @@ public class PauseMenu : MonoBehaviour
         yield return StartCoroutine(Confirmation.instance.Confirm("Are you sure you want to restart the whole level?"));
         if (Confirmation.instance.answer)
         {
+            Time.timeScale = 1;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
@@ -75,6 +99,7 @@ public class PauseMenu : MonoBehaviour
         yield return StartCoroutine(Confirmation.instance.Confirm("Are you sure you want go back to the main menu?"));
         if (Confirmation.instance.answer)
         {
+            Time.timeScale = 1;
             SceneManager.LoadScene(0);
         }
     }

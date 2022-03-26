@@ -28,5 +28,6 @@ public class CheckPoint : MonoBehaviour
             savedObjects[i].reference.position = savedObjects[i].savedPos;
             savedObjects[i].reference.eulerAngles = new Vector3(0, 0, savedObjects[i].savedRot);
         }
+        PortalGun.toggler = true;
     }
 }

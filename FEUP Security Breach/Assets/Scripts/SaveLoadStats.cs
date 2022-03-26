@@ -10,12 +10,13 @@ public class SaveLoadStats : MonoBehaviour
         BinaryFormatter bf = new BinaryFormatter();
         if (File.Exists(path))
         {
-            FileStream stream = new FileStream(path, FileMode.Open);
-            Stats stats = bf.Deserialize(stream) as Stats;
-            if(stats.bestTime>TimeCounter.time) {
-                bf.Serialize(stream,new Stats(TimeCounter.time));
+            float highscore = Load();
+            if (highscore > TimeCounter.time)
+            {
+                FileStream stream = new FileStream(path, FileMode.Open);
+                bf.Serialize(stream, new Stats(TimeCounter.time));
+                stream.Close();
             }
-            stream.Close();
         }
         else
         {
@@ -26,7 +27,7 @@ public class SaveLoadStats : MonoBehaviour
         }
     }
 
-    public static string Load()
+    public static float Load()
     {
         string path = Application.persistentDataPath + "/Stats";
         BinaryFormatter bf = new BinaryFormatter();
@@ -35,8 +36,8 @@ public class SaveLoadStats : MonoBehaviour
             FileStream stream = new FileStream(path, FileMode.Open);
             Stats stats = bf.Deserialize(stream) as Stats;
             stream.Close();
-            return stats.bestTime.ToString();
+            return stats.bestTime;
         }
-        return "----";
+        return -1;
     }
 }

@@ -18,6 +18,7 @@ public class Confirmation : MonoBehaviour
     {
         answer = a;
         done = true;
+        transform.GetChild(0).gameObject.SetActive(false);
     }
 
     public IEnumerator Confirm(string text)
@@ -28,9 +29,11 @@ public class Confirmation : MonoBehaviour
         done = false;
         while (!done)
         {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                setAnswer(false);
+            }
             yield return null;
         }
-        yield return null;
-        transform.GetChild(0).gameObject.SetActive(false);
     }
 }

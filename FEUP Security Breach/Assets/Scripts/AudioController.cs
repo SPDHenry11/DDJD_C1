@@ -25,6 +25,7 @@ public class AudioController : MonoBehaviour
             sounds[i].audio = audios[i];
             sounds[i].name = audios[i].gameObject.name;
         }
+        mixer.SetFloat("Volume", 0);
     }
     public void Play(string name)
     {

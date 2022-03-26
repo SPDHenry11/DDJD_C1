@@ -168,7 +168,10 @@ public class InteractionsController : MonoBehaviour
                 GameController.instance.SetCheckPoint(other.GetComponent<CheckPoint>());
                 break;
             case "EndGame":
-                if (!GameController.imunity) UIController.instance.End();
+                if (!GameController.imunity) {
+                    PauseMenu.instance.EndGame();
+                    UIController.instance.End();
+                }
                 break;
         }
     }

@@ -36,7 +36,6 @@ public class UIController : MonoBehaviour
     {
         if (GameController.imunity) return;
         GameController.imunity = true;
-        StopAllCoroutines();
         StartCoroutine(BustedEffect());
     }
 
@@ -87,21 +86,23 @@ public class UIController : MonoBehaviour
         TimeCounter.instance.EndGame();
         AudioController.instance.Stop("Music");
         AudioController.instance.Play("Win");
-        TextMeshProUGUI text = endGame.GetComponent<TextMeshProUGUI>();
-        text.faceColor = new Color(255, 255, 255, 0);
+        endGame.transform.GetChild(1).GetComponent<Text>().text = "Score: " + TimeCounter.time.ToString("F1") + 's';
+        CanvasGroup cg = endGame.GetComponent<CanvasGroup>();
+        cg.alpha = 0;
         yield return StartCoroutine(Fader.instance.FadeOut());
         endGame.SetActive(true);
-        while (text.faceColor.a < 255)
+        while (cg.alpha < 1)
         {
-            text.faceColor = new Color32(255, 255, 255, (byte)Mathf.Min(text.faceColor.a + 255 * Time.deltaTime, 255));
+            cg.alpha += Time.unscaledDeltaTime;
             yield return null;
         }
+        cg.alpha = 1;
         yield return new WaitForSeconds(2);
         StartCoroutine(AudioController.instance.FadeOut());
         yield return new WaitForSeconds(1);
-        while (text.faceColor.a > 0)
+        while (cg.alpha > 0)
         {
-            text.faceColor = new Color32(255, 255, 255, (byte)Mathf.Max(text.faceColor.a - 255 * Time.deltaTime, 0));
+            cg.alpha -= Time.unscaledDeltaTime;
             yield return null;
         }
         SceneManager.LoadScene(0);

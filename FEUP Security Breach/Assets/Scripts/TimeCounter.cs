@@ -14,6 +14,7 @@ public class TimeCounter : MonoBehaviour
     {
         text = GetComponent<TextMeshProUGUI>();
         instance = this;
+        time = 0;
     }
 
     void Update()
@@ -27,6 +28,6 @@ public class TimeCounter : MonoBehaviour
     public void EndGame()
     {
         counting = false;
-        //Save counter??
+        SaveLoadStats.Save();
     }
 }

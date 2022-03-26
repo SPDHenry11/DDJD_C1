@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour
     void Awake()
     {
         instance = this;
+        imunity=false;
     }
     public void SetCheckPoint(CheckPoint newCkeckPoint)
     {

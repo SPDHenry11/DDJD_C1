@@ -1,14 +1,16 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI highScore;
+    [SerializeField] private Text highScore;
     void Awake()
     {
-        highScore.text = "HighScore: " + SaveLoadStats.Load();
+        float score = SaveLoadStats.Load();
+        if(score<0) highScore.text = "HighScore: ----";
+        else highScore.text = "HighScore: " + score.ToString("F1") + 's';
     }
     public void LoadLevel()
     {

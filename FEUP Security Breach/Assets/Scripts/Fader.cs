@@ -23,7 +23,7 @@ public class Fader : MonoBehaviour
         while (fader.color.a > 0)
         {
             if (!tracker) yield break;
-            fader.color = new Color(0, 0, 0, fader.color.a - 0.5f * Time.deltaTime);
+            fader.color = new Color(0, 0, 0, fader.color.a - 0.5f * Time.unscaledDeltaTime);
             yield return null;
         }
         fader.color = new Color(0, 0, 0, 0);
@@ -38,7 +38,7 @@ public class Fader : MonoBehaviour
         while (fader.color.a < 1)
         {
             if (tracker) yield break;
-            fader.color = new Color(0, 0, 0, fader.color.a + 0.5f * Time.deltaTime);
+            fader.color = new Color(0, 0, 0, fader.color.a + 0.5f * Time.unscaledDeltaTime);
             yield return null;
         }
         fader.color = new Color(0, 0, 0, 1);

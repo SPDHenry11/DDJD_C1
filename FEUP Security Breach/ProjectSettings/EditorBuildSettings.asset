@@ -7,8 +7,8 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
-    guid: 047808faa66d5d14d965f5d70923456f
+    guid: 6b26b9fab79444c479d34dcab1128a54
   - enabled: 1
-    path: Assets/Scenes/SecurityCamera.unity
-    guid: 5e5154e81f1946344ab5ce2fa23fe68e
+    path: Assets/Scenes/FinalLevel.unity
+    guid: 759bef9a0e9068c4fba4e63c2a4c6621
   m_configObjects: {}
