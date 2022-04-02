@@ -1,7 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Security Camera full behaviour
+/// </summary>
 public class SecurityCamera : MonoBehaviour
 {
     [SerializeField] private float angle = 45;
@@ -101,7 +103,7 @@ public class SecurityCamera : MonoBehaviour
             transform.eulerAngles = new Vector3(0, 0, clamped);
             time += Time.deltaTime;
             yield return null;
-            if (time >= 2)
+            if (time >= 1.5f)
             {
                 UIController.instance.Busted();
             }

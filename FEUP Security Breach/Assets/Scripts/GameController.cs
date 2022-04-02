@@ -1,6 +1,8 @@
-using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Manages the overall variables that affect the game flow
+/// </summary>
 public class GameController : MonoBehaviour
 {
     public static GameController instance;

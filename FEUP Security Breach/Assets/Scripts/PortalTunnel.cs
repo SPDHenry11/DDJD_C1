@@ -1,21 +1,28 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody2D))]
+/// <summary>
+/// Adds the ability to go through portals
+/// </summary>
 public class PortalTunnel : MonoBehaviour
 {
     private bool pause = false;
+    [SerializeField] private UnityEvent onTunnel;
     void OnTriggerEnter2D(Collider2D other)
     {
         if (!pause)
         {
             if (other.tag.Equals("OrangePortal") && PortalGun.instantiatedPortals[1] != null)
             {
-                Tunnel(0, 1);
+                Rigidbody2D rb = GetComponent<Rigidbody2D>();
+                if (rb.velocity.magnitude > 1 && Vector3.Angle(rb.velocity, -other.transform.up) < 80) Tunnel(0, 1);
             }
             else if (other.tag.Equals("BluePortal") && PortalGun.instantiatedPortals[0] != null)
             {
-                Tunnel(1, 0);
+                Rigidbody2D rb = GetComponent<Rigidbody2D>();
+                if (rb.velocity.magnitude > 1 && Vector3.Angle(rb.velocity, -other.transform.up) < 80) Tunnel(1, 0);
             }
         }
     }
@@ -23,7 +30,6 @@ public class PortalTunnel : MonoBehaviour
     private void Tunnel(int entrance, int exit)
     {
         AudioController.instance.Play("Tunnel");
-        Movement.instance.grounded = false;
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
         Vector2 velocity = rb.velocity;
         Transform exitPortal = PortalGun.instantiatedPortals[exit].transform;
@@ -31,6 +37,7 @@ public class PortalTunnel : MonoBehaviour
         transform.position = exitPortal.position + exitPortal.up / 2;
         rb.velocity = Quaternion.AngleAxis(angle, Vector3.forward) * rb.velocity;
         rb.velocity *= Vector3.Dot(rb.velocity.normalized, exitPortal.up);
+        onTunnel.Invoke();
         StartCoroutine(Pause());
     }
 

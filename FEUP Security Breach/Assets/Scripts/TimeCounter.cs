@@ -1,8 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+/// <summary>
+/// Manages the highscore time value
+/// </summary>
 public class TimeCounter : MonoBehaviour
 {
     private TextMeshProUGUI text;

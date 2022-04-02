@@ -2,6 +2,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Pause Menu functions
+/// </summary>
 public class PauseMenu : MonoBehaviour
 {
     public static PauseMenu instance;

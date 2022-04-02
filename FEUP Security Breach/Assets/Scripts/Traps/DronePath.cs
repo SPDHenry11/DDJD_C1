@@ -1,6 +1,11 @@
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Drone path;
+/// Provides the var "nodes" corresponding to the patrol path.
+/// Provides the var "returnPaths" corresponding to the paths for the drone to return to its patrol path
+/// </summary>
 public class DronePath : MonoBehaviour
 {
     public Vector2[] nodes;

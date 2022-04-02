@@ -1,7 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Manages the life time of instantiated effects.
+/// </summary>
 public class LifeTime : MonoBehaviour
 {
     [SerializeField] private float time = 2;

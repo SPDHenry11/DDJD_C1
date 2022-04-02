@@ -2,6 +2,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Manages screen fade in and fade out
+/// </summary>
 public class Fader : MonoBehaviour
 {
     public static Fader instance;

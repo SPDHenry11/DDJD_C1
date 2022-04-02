@@ -3,6 +3,9 @@ using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
+/// <summary>
+/// Drone full behaviour
+/// </summary>
 public class Drone : MonoBehaviour
 {
     [SerializeField] private DronePath path;
@@ -93,6 +96,7 @@ public class Drone : MonoBehaviour
 
     IEnumerator Return()
     {
+        yield return new WaitForSeconds(0.5f);
         int returnPath = FindReturnPath();
         if (returnPath < 0)
         {

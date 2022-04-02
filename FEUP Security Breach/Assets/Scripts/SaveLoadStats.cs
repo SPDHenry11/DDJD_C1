@@ -2,6 +2,9 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
+/// <summary>
+/// Save and Load system for reading and writing the highscore
+/// </summary>
 public class SaveLoadStats : MonoBehaviour
 {
     public static void Save()

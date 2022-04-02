@@ -2,6 +2,9 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Manages the portal gun shots and portals
+/// </summary>
 public class PortalGun : MonoBehaviour
 {
     [HideInInspector] public static GameObject[] instantiatedPortals;

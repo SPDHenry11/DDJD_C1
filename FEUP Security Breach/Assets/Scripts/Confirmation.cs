@@ -2,6 +2,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Manages all confirmation answers.
+/// </summary>
 public class Confirmation : MonoBehaviour
 {
     public static Confirmation instance;

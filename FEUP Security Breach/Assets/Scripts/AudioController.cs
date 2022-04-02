@@ -3,6 +3,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 
+/// <summary>
+/// Manages all the 2D audio and the Audio Mixer
+/// </summary>
 public class AudioController : MonoBehaviour
 {
     private sound[] sounds;

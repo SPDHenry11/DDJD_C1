@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Manages checkpoints
+/// </summary>
 public class CheckPoint : MonoBehaviour
 {
     [SerializeField] private Object[] savedObjects;

@@ -4,6 +4,9 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Manages overall UI and UI related functions
+/// </summary>
 public class UIController : MonoBehaviour
 {
     public static UIController instance;
@@ -37,6 +40,7 @@ public class UIController : MonoBehaviour
         if (GameController.imunity) return;
         GameController.imunity = true;
         StartCoroutine(BustedEffect());
+        Movement.instance.GetComponent<Rigidbody2D>().drag = 2;
     }
 
     public void End()
@@ -75,6 +79,7 @@ public class UIController : MonoBehaviour
         busted.SetActive(false);
         GameController.instance.checkPoint.Restart();
         Movement.instance.enabled = true;
+        Movement.instance.GetComponent<Rigidbody2D>().drag = 0.5f;
         StartCoroutine(AudioController.instance.FadeIn());
         yield return StartCoroutine(Fader.instance.FadeIn());
         yield return new WaitForSeconds(1);

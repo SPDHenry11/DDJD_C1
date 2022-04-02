@@ -3,6 +3,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// Main Menu functions
+/// </summary>
 public class MainMenu : MonoBehaviour
 {
     [SerializeField] private Text highScore;
@@ -14,7 +17,6 @@ public class MainMenu : MonoBehaviour
     }
     public void LoadLevel()
     {
-        //play audio
         SceneManager.LoadScene(1);
     }
     public void Quit()

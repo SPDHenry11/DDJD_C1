@@ -52,8 +52,14 @@ TagManager:
   - name: Floor
     uniqueID: 3640175811
     locked: 0
+  - name: Coins
+    uniqueID: 2319945571
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: MiddleFront
+    uniqueID: 2410690553
     locked: 0
   - name: Gun
     uniqueID: 2339571849

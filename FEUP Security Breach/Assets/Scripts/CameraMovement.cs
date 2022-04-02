@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Main Camera follows the player smoothly
+/// </summary>
 public class CameraMovement : MonoBehaviour
 {
     private Transform target;

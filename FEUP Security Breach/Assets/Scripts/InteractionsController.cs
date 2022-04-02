@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Manages all the player's interactions with items and triggers
+/// </summary>
 public class InteractionsController : MonoBehaviour
 {
-    //Items
     [HideInInspector] public static Rigidbody2D item;
     [SerializeField] private Transform itemHolder;
     [SerializeField] private LayerMask itemsRaycast;
@@ -38,12 +40,6 @@ public class InteractionsController : MonoBehaviour
     {
         if (item != null)
         {
-            float distance = Vector2.Distance(item.position, itemHolder.position);
-            if (distance > 5)
-            {
-                DropItem();
-            }
-            else item.MovePosition(item.position + ((new Vector2(itemHolder.position.x, itemHolder.position.y) - item.position) * 25) * Time.deltaTime);
             if (Input.GetKeyDown(KeyCode.E))
             {
                 item.velocity = (new Vector2(itemHolder.position.x, itemHolder.position.y) - item.position) * 5f;
@@ -52,7 +48,7 @@ public class InteractionsController : MonoBehaviour
         }
         else
         {
-            RaycastHit2D hit = Physics2D.Raycast(itemHolder.position - itemHolder.forward * 2, itemHolder.forward, 2.5f, itemsRaycast);
+            RaycastHit2D hit = Physics2D.Raycast(itemHolder.position - itemHolder.forward * 2, itemHolder.forward, 3, itemsRaycast);
             if (hit.collider != null && hit.collider.gameObject.layer == 11)
             {
                 if (currentItem.obj != null && !GameObject.ReferenceEquals(currentItem.obj, hit.collider.gameObject))
@@ -135,6 +131,19 @@ public class InteractionsController : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (item != null)
+        {
+            float distance = Vector2.Distance(item.position, itemHolder.position);
+            if (distance > 5)
+            {
+                DropItem();
+            }
+            else item.MovePosition(item.position + ((new Vector2(itemHolder.position.x, itemHolder.position.y) - item.position) * 15) * Time.deltaTime);
+        }
+    }
+
     private void DropItem()
     {
         item.gravityScale = 1;
@@ -168,7 +177,8 @@ public class InteractionsController : MonoBehaviour
                 GameController.instance.SetCheckPoint(other.GetComponent<CheckPoint>());
                 break;
             case "EndGame":
-                if (!GameController.imunity) {
+                if (!GameController.imunity)
+                {
                     PauseMenu.instance.EndGame();
                     UIController.instance.End();
                 }
@@ -188,5 +198,14 @@ public class InteractionsController : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         Destroy(obj);
+    }
+
+    //Take item through portal
+    public void Tunnel()
+    {
+        if (item != null)
+        {
+            item.position = Movement.instance.transform.position;
+        }
     }
 }
