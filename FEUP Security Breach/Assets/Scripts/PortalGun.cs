@@ -8,7 +8,6 @@ using UnityEngine;
 public class PortalGun : MonoBehaviour
 {
     [HideInInspector] public static GameObject[] instantiatedPortals;
-    public static bool toggler = true;
     [SerializeField] private float range = 50;
     [SerializeField] private LayerMask portalGunShotLayers;
     [SerializeField] private Transform muzzle;
@@ -16,53 +15,61 @@ public class PortalGun : MonoBehaviour
     [SerializeField] private GameObject bulletTrail;
 
     private Coroutine[] coroutines;
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(muzzle.position, muzzle.position + muzzle.forward * range);
+    }
     void Awake()
     {
         instantiatedPortals = new GameObject[2];
         coroutines = new Coroutine[2];
-        toggler = true;
+    }
+    void Start()
+    {
+        PauseMenu.instance.OnPause.AddListener(delegate { enabled = false; });
+        PauseMenu.instance.OnResume.AddListener(delegate { enabled = true; });
     }
     void Update()
     {
-        if (toggler)
+        Vector3 mousePos = Input.mousePosition;
+
+        Vector3 objectPos = Camera.main.WorldToScreenPoint(transform.position);
+        mousePos.x = mousePos.x - objectPos.x;
+        mousePos.y = mousePos.y - objectPos.y;
+
+        float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+
+        if (instantiatedPortals[0] != null) instantiatedPortals[0].GetComponent<BoxCollider2D>().enabled = false;
+        //Orange Portal
+        if (Input.GetButtonDown("Fire1"))
         {
-            Vector3 mousePos = Input.mousePosition;
-
-            Vector3 objectPos = Camera.main.WorldToScreenPoint(transform.position);
-            mousePos.x = mousePos.x - objectPos.x;
-            mousePos.y = mousePos.y - objectPos.y;
-
-            float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
-
-            if (instantiatedPortals[0] != null) instantiatedPortals[0].GetComponent<BoxCollider2D>().enabled = false;
-            //Orange Portal
-            if (Input.GetButtonDown("Fire1"))
+            RaycastHit2D hit = Physics2D.Raycast(muzzle.position, muzzle.forward, range, portalGunShotLayers);
+            if (hit.collider != null)
             {
-                RaycastHit2D hit = Physics2D.Raycast(muzzle.position, muzzle.forward, range, portalGunShotLayers);
-                if (hit.collider != null)
-                {
-                    StartCoroutine(AnimateBulletTrail(hit.point, portals[0].GetComponentInChildren<SpriteRenderer>().color));
-                    if (hit.collider.tag.Equals("PortalWall")) ValidatePortal(hit.point, -hit.normal, 0);
-                }
-                else StartCoroutine(AnimateBulletTrail(muzzle.position + muzzle.forward * range, portals[0].GetComponentInChildren<SpriteRenderer>().color));
+                StartCoroutine(AnimateBulletTrail(hit.point, portals[0].GetComponentInChildren<SpriteRenderer>().color));
+                if (hit.collider.tag.Equals("PortalWall")) ValidatePortal(hit.point, -hit.normal, 0, hit.collider.gameObject);
             }
-            if (instantiatedPortals[0] != null) instantiatedPortals[0].GetComponent<BoxCollider2D>().enabled = true;
-            if (instantiatedPortals[1] != null) instantiatedPortals[1].GetComponent<BoxCollider2D>().enabled = false;
-            if (Input.GetButtonDown("Fire2"))
-            {
-                RaycastHit2D hit = Physics2D.Raycast(muzzle.position, muzzle.forward, range, portalGunShotLayers);
-                if (hit.collider != null)
-                {
-                    StartCoroutine(AnimateBulletTrail(hit.point, portals[1].GetComponentInChildren<SpriteRenderer>().color));
-                    if (hit.collider.tag.Equals("PortalWall")) ValidatePortal(hit.point, -hit.normal, 1);
-                }
-                else StartCoroutine(AnimateBulletTrail(muzzle.position + muzzle.forward * range, portals[1].GetComponentInChildren<SpriteRenderer>().color));
-            }
-            if (instantiatedPortals[1] != null) instantiatedPortals[1].GetComponent<BoxCollider2D>().enabled = true;
+            else StartCoroutine(AnimateBulletTrail(muzzle.position + muzzle.forward * range, portals[0].GetComponentInChildren<SpriteRenderer>().color));
         }
+        if (instantiatedPortals[0] != null) instantiatedPortals[0].GetComponent<BoxCollider2D>().enabled = true;
+        if (instantiatedPortals[1] != null) instantiatedPortals[1].GetComponent<BoxCollider2D>().enabled = false;
+        if (Input.GetButtonDown("Fire2"))
+        {
+            RaycastHit2D hit = Physics2D.Raycast(muzzle.position, muzzle.forward, range, portalGunShotLayers);
+            if (hit.collider != null)
+            {
+                StartCoroutine(AnimateBulletTrail(hit.point, portals[1].GetComponentInChildren<SpriteRenderer>().color));
+                if (hit.collider.tag.Equals("PortalWall")) ValidatePortal(hit.point, -hit.normal, 1, hit.collider.gameObject);
+            }
+            else StartCoroutine(AnimateBulletTrail(muzzle.position + muzzle.forward * range, portals[1].GetComponentInChildren<SpriteRenderer>().color));
+        }
+        if (instantiatedPortals[1] != null) instantiatedPortals[1].GetComponent<BoxCollider2D>().enabled = true;
+
     }
-    private void ValidatePortal(Vector2 spot, Vector2 direction, int id)
+    private void ValidatePortal(Vector2 spot, Vector2 direction, int id, GameObject wall)
     {
         Vector2 parallel = Vector2.Perpendicular(direction);
         parallel = new Vector2(Mathf.Abs(parallel.x), Mathf.Abs(parallel.y)) * 1.3f;
@@ -70,13 +77,13 @@ public class PortalGun : MonoBehaviour
         RaycastHit2D boundHit1 = Physics2D.Raycast(spot + parallel - direction, direction, 2, portalGunShotLayers);
         RaycastHit2D boundHit2 = Physics2D.Raycast(spot - parallel - direction, direction, 2, portalGunShotLayers);
         int compensation = 1;
-        if (boundHit1.collider == null || !boundHit1.collider.tag.Equals("PortalWall"))
+        if (boundHit1.collider == null || !GameObject.ReferenceEquals(boundHit1.collider.gameObject,wall))
         {
             compensation = -1;
-            if (boundHit2.collider == null || !boundHit2.collider.tag.Equals("PortalWall")) return;
+            if (boundHit2.collider == null || !GameObject.ReferenceEquals(boundHit2.collider.gameObject,wall)) return;
         }
-        else if (boundHit1.collider != null && boundHit1.collider.tag.Equals("PortalWall") && !Physics2D.OverlapArea(boundHit1.point - direction * 0.1f, boundHit2.point - direction, portalGunShotLayers)
-            && boundHit2.collider != null && boundHit2.collider.tag.Equals("PortalWall"))
+        else if (boundHit1.collider != null && GameObject.ReferenceEquals(boundHit1.collider.gameObject,wall)
+            && boundHit2.collider != null && GameObject.ReferenceEquals(boundHit2.collider.gameObject,wall))
         {
             InstantiatePortal(spot, direction, id);
             return;
@@ -85,9 +92,9 @@ public class PortalGun : MonoBehaviour
         {
             boundHit1 = Physics2D.Raycast(spot + parallel + parallel * Mathf.Sign(compensation) * i / 10 - direction, direction, 2, portalGunShotLayers);
             boundHit2 = Physics2D.Raycast(spot - parallel + parallel * Mathf.Sign(compensation) * i / 10 - direction, direction, 2, portalGunShotLayers);
-            if (boundHit1.collider != null && boundHit1.collider.tag.Equals("PortalWall")
-            && boundHit2.collider != null && boundHit2.collider.tag.Equals("PortalWall")
-            && !Physics2D.OverlapArea(boundHit1.point - direction * 0.1f, boundHit2.point - direction, portalGunShotLayers))
+            var something = Physics2D.OverlapArea(boundHit1.point - direction * 0.1f, boundHit2.point - direction, portalGunShotLayers);
+            if (boundHit1.collider != null && GameObject.ReferenceEquals(boundHit1.collider.gameObject,wall)
+            && boundHit2.collider != null && GameObject.ReferenceEquals(boundHit2.collider.gameObject,wall))
             {
                 InstantiatePortal(new Vector2((boundHit1.point.x + boundHit2.point.x) / 2, (boundHit1.point.y + boundHit2.point.y) / 2), direction, id);
                 return;
@@ -114,7 +121,7 @@ public class PortalGun : MonoBehaviour
         float destination = portals[0].transform.GetChild(0).localScale.x;
         Transform target = portal.GetChild(0).transform;
         target.localScale = new Vector3(0, 1, 1);
-        while (target.localScale.x < destination * 0.95f)
+        while (target != null && target.localScale.x < destination * 0.95f)
         {
             scale += (destination - scale) * Time.deltaTime * 6;
             target.localScale = new Vector3(scale, destination, 1);

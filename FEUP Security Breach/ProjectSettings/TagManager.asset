@@ -12,6 +12,7 @@ TagManager:
   - CoffeeMachine
   - CheckPoint
   - EndGame
+  - MusicTrigger
   layers:
   - Default
   - TransparentFX
@@ -48,6 +49,12 @@ TagManager:
   m_SortingLayers:
   - name: Background
     uniqueID: 934135841
+    locked: 0
+  - name: Decorations
+    uniqueID: 1925646369
+    locked: 0
+  - name: Player
+    uniqueID: 2089166469
     locked: 0
   - name: Floor
     uniqueID: 3640175811

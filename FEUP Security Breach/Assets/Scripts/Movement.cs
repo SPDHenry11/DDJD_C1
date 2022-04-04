@@ -30,6 +30,12 @@ public class Movement : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
     }
 
+    void Start()
+    {
+        PauseMenu.instance.OnPause.AddListener(delegate { enabled = false; });
+        PauseMenu.instance.OnResume.AddListener(delegate { enabled = true; });
+    }
+
     void Update()
     {
         //flip character
@@ -59,8 +65,8 @@ public class Movement : MonoBehaviour
         else
         {
             float horizontal = Input.GetAxis("Horizontal");
-            if(!((horizontal<0 && rb.velocity.x<-speed) || (horizontal>0 && rb.velocity.x>speed)))
-               rb.AddForce(new Vector2(Input.GetAxis("Horizontal") * speed, 0), ForceMode2D.Force);
+            if (!((horizontal < 0 && rb.velocity.x < -speed) || (horizontal > 0 && rb.velocity.x > speed)))
+                rb.AddForce(new Vector2(Input.GetAxis("Horizontal") * speed, 0), ForceMode2D.Force);
         }
     }
 
@@ -96,6 +102,10 @@ public class Movement : MonoBehaviour
         {
             transform.eulerAngles = new Vector3(0f, 180f, 0f);
             facingRight = false;
+        }
+        if (!Physics2D.OverlapCircle(groundCheckPivot.position, 0.4f, groundLayer))
+        {
+            anim.SetBool("grounded", false);
         }
     }
 

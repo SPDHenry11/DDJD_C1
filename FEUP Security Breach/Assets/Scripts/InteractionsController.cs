@@ -7,6 +7,7 @@ using UnityEngine;
 /// </summary>
 public class InteractionsController : MonoBehaviour
 {
+    public static InteractionsController instance;
     [HideInInspector] public static Rigidbody2D item;
     [SerializeField] private Transform itemHolder;
     [SerializeField] private LayerMask itemsRaycast;
@@ -32,8 +33,15 @@ public class InteractionsController : MonoBehaviour
 
     void Awake()
     {
+        instance = this;
         triggerEffectDefaultSize = triggerEffect.GetComponent<SpriteRenderer>().bounds.size;
         triggerEffect.transform.SetParent(null);
+    }
+
+    void Start()
+    {
+        PauseMenu.instance.OnPause.AddListener(delegate { enabled = false; });
+        PauseMenu.instance.OnResume.AddListener(delegate { enabled = true; });
     }
 
     void Update()
@@ -115,7 +123,8 @@ public class InteractionsController : MonoBehaviour
                                     AudioController.instance.Play("Good");
                                     powerUpEffect.Play();
                                     currentTriggers[closestIndex].GetComponent<Collider2D>().enabled = false;
-                                    Movement.instance.speed = 10;
+                                    Movement.instance.speed *= 1.75f;
+                                    Notifications.instance.Notify("Speed boost applied!");
                                 }
                                 else AudioController.instance.Play("Error");
                                 break;
@@ -175,6 +184,11 @@ public class InteractionsController : MonoBehaviour
                 break;
             case "CheckPoint":
                 GameController.instance.SetCheckPoint(other.GetComponent<CheckPoint>());
+                other.GetComponent<Collider2D>().enabled = false;
+                ResetItem();
+                AudioController.instance.Play("Good");
+                powerUpEffect.Play();
+                Notifications.instance.Notify("New checkpoint reached!");
                 break;
             case "EndGame":
                 if (!GameController.imunity)
@@ -182,6 +196,11 @@ public class InteractionsController : MonoBehaviour
                     PauseMenu.instance.EndGame();
                     UIController.instance.End();
                 }
+                break;
+            case "MusicTrigger":
+                AudioController.instance.Stop("Music");
+                AudioController.instance.Play("Music2");
+                Destroy(other.gameObject);
                 break;
         }
     }
@@ -206,6 +225,16 @@ public class InteractionsController : MonoBehaviour
         if (item != null)
         {
             item.position = Movement.instance.transform.position;
+        }
+    }
+
+    public void ResetItem()
+    {
+        if (item != null)
+        {
+            item.velocity = (new Vector2(itemHolder.position.x, itemHolder.position.y) - item.position) * 5f;
+            item.gameObject.AddComponent<LifeTime>();
+            DropItem();
         }
     }
 }

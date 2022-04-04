@@ -17,5 +17,6 @@ public class GameController : MonoBehaviour
     {
         Destroy(checkPoint.gameObject);
         checkPoint = newCkeckPoint;
+        checkPoint.InvalidateObjects();
     }
 }

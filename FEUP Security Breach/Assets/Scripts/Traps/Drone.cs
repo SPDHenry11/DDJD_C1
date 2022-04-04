@@ -48,34 +48,40 @@ public class Drone : MonoBehaviour
             Vector2 nextNode = path.nodes[destination];
             while (Vector2.Distance(transform.position, nextNode) > 1f)
             {
-                RaycastHit2D hit = Physics2D.Raycast(transform.position, target.position - transform.position, sightRange, visibleLayers);
-                if (!GameController.imunity && hit.collider != null && hit.collider.tag.Equals("Player"))
+                if (PlayerOnSight())
                 {
-                    yield return null;
+                    yield return new WaitForFixedUpdate();
                     StartCoroutine(Chase());
                     yield break;
                 }
-                Vector2 force = Vector2.ClampMagnitude((nextNode - new Vector2(transform.position.x, transform.position.y)) * Time.deltaTime * 100, 2);
+                Vector2 force = Vector2.ClampMagnitude((nextNode - new Vector2(transform.position.x, transform.position.y)) * Time.deltaTime * 200, 10);
                 rb.AddForce(force, ForceMode2D.Force);
-                upDirection = force.x / 4;
-                yield return null;
+                upDirection = force.x / 20;
+                yield return new WaitForFixedUpdate();
             }
             destination++;
             if (destination >= path.nodes.Length) destination = 0;
+            yield return new WaitForFixedUpdate();
+            if (PlayerOnSight())
+            {
+                yield return new WaitForFixedUpdate();
+                StartCoroutine(Chase());
+                yield break;
+            }
         }
     }
     IEnumerator Chase()
     {
         AudioController.instance.Play("DroneDetection");
         Vector2 lastPos = target.position;
-        while (!GameController.imunity && Vector2.Distance(transform.position, lastPos) > 1f)
+        float lostTime=0;
+        while (!GameController.imunity && Vector2.Distance(transform.position, lastPos) > 1f && lostTime<2)
         {
-            Vector2 force = Vector2.ClampMagnitude((lastPos - new Vector2(transform.position.x, transform.position.y)) * Time.deltaTime * 200, 4);
+            Vector2 force = Vector2.ClampMagnitude((lastPos - new Vector2(transform.position.x, transform.position.y)) * Time.deltaTime * 200, 20);
             rb.AddForce(force, ForceMode2D.Force);
-            upDirection = force.x / 4;
-            yield return null;
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, target.position - transform.position, sightRange, visibleLayers);
-            if (hit.collider != null && hit.collider.tag.Equals("Player"))
+            upDirection = force.x / 20;
+            yield return new WaitForFixedUpdate();
+            if (PlayerOnSight())
             {
                 lastPos = target.position;
                 if (Vector2.Distance(target.position, transform.position) <= deathRange)
@@ -84,7 +90,9 @@ public class Drone : MonoBehaviour
                     StartCoroutine(Return());
                     yield break;
                 }
+                lostTime=0;
             }
+            else lostTime+=Time.deltaTime;
             if (Vector2.Distance(transform.position, path.transform.position) > path.moveRange)
             {
                 StartCoroutine(Return());
@@ -96,11 +104,12 @@ public class Drone : MonoBehaviour
 
     IEnumerator Return()
     {
+        transform.GetChild(0).GetComponent<AudioSource>().Play();
         yield return new WaitForSeconds(0.5f);
         int returnPath = FindReturnPath();
         if (returnPath < 0)
         {
-            yield return null;
+            yield return new WaitForFixedUpdate();
             StartCoroutine(Patrol());
             yield break;
         }
@@ -109,15 +118,15 @@ public class Drone : MonoBehaviour
             Vector2 nextNode = path.returnPaths[returnPath].nodes[destination];
             while (Vector2.Distance(transform.position, nextNode) > 1f)
             {
-                Vector2 force = Vector2.ClampMagnitude((nextNode - new Vector2(transform.position.x, transform.position.y)) * Time.deltaTime * 100, 2);
+                Vector2 force = Vector2.ClampMagnitude((nextNode - new Vector2(transform.position.x, transform.position.y)) * Time.deltaTime * 200, 10);
                 rb.AddForce(force, ForceMode2D.Force);
-                upDirection = force.x / 4;
-                yield return null;
+                upDirection = force.x / 20;
+                yield return new WaitForFixedUpdate();
             }
             destination++;
             if (destination >= path.returnPaths[returnPath].nodes.Length)
             {
-                yield return null;
+                yield return new WaitForFixedUpdate();
                 FindDestination();
                 StartCoroutine(Patrol());
                 yield break;
@@ -212,5 +221,11 @@ public class Drone : MonoBehaviour
             destination = secondClosestIndex;
             return secondBestPath;
         }
+    }
+
+    private bool PlayerOnSight()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, target.position - transform.position, sightRange, visibleLayers);
+        return (!GameController.imunity && hit.collider != null && hit.collider.tag.Equals("Player"));
     }
 }

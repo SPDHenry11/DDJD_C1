@@ -37,17 +37,18 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\CheckPoint.cs" />
-     <Compile Include="Assets\Scripts\Confirmation.cs" />
+     <Compile Include="Assets\Scripts\UI\Confirmation.cs" />
      <Compile Include="Assets\Scripts\Gate.cs" />
-     <Compile Include="Assets\Scripts\TimeCounter.cs" />
+     <Compile Include="Assets\Scripts\UI\TimeCounter.cs" />
      <Compile Include="Assets\Scripts\AudioController.cs" />
-     <Compile Include="Assets\Scripts\MainMenu.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu.cs" />
      <Compile Include="Assets\Scripts\Traps\Drone.cs" />
-     <Compile Include="Assets\Scripts\Fader.cs" />
+     <Compile Include="Assets\Scripts\UI\Fader.cs" />
      <Compile Include="Assets\Scripts\Traps\DronePath.cs" />
-     <Compile Include="Assets\Scripts\UIController.cs" />
+     <Compile Include="Assets\Scripts\UI\UIController.cs" />
      <Compile Include="Assets\Scripts\InteractionsController.cs" />
-     <Compile Include="Assets\Scripts\Button.cs" />
+     <Compile Include="Assets\Scripts\UI\Notifications.cs" />
+     <Compile Include="Assets\Scripts\UI\Button.cs" />
      <Compile Include="Assets\Scripts\PortalTunnel.cs" />
      <Compile Include="Assets\Scripts\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\PortalGun.cs" />
@@ -55,10 +56,13 @@
      <Compile Include="Assets\Scripts\Movement.cs" />
      <Compile Include="Assets\Scripts\PressureButton.cs" />
      <Compile Include="Assets\Scripts\LifeTime.cs" />
-     <Compile Include="Assets\Scripts\PauseMenu.cs" />
+     <Compile Include="Assets\Scripts\FallSpeedLimit.cs" />
+     <Compile Include="Assets\Scripts\UI\PauseMenu.cs" />
      <Compile Include="Assets\Scripts\Traps\SecurityCamera.cs" />
      <Compile Include="Assets\Scripts\Stats.cs" />
      <Compile Include="Assets\Scripts\SaveLoadStats.cs" />
+     <Compile Include="Assets\Scripts\Traps\DroneFree.cs" />
+     <Compile Include="Assets\Scripts\UIScaler.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />

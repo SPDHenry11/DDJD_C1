@@ -6,6 +6,8 @@ using UnityEngine;
 public class CheckPoint : MonoBehaviour
 {
     [SerializeField] private Object[] savedObjects;
+    [SerializeField] private Collider2D[] invalidObjects;
+
     [System.Serializable]
     public struct Object
     {
@@ -31,6 +33,18 @@ public class CheckPoint : MonoBehaviour
             savedObjects[i].reference.position = savedObjects[i].savedPos;
             savedObjects[i].reference.eulerAngles = new Vector3(0, 0, savedObjects[i].savedRot);
         }
-        PortalGun.toggler = true;
+        Movement.instance.transform.position = transform.position;
+    }
+
+    public void InvalidateObjects()
+    {
+        if (PortalGun.instantiatedPortals[0] != null) Destroy(PortalGun.instantiatedPortals[0]);
+        if (PortalGun.instantiatedPortals[1] != null) Destroy(PortalGun.instantiatedPortals[1]);
+        foreach (Collider2D c in invalidObjects)
+        {
+            c.gameObject.AddComponent<LifeTime>();
+            c.enabled = false;
+        }
+
     }
 }
